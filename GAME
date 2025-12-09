@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>國家知識王: 7 Continents</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Arial+Black&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: "DotGothic16", "PMingLiU", monospace;
+            background-color: #008080;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAGFBMVEUAAAAAAACAgIAAAADAwMD/AAAA////AAD3+P2XAAAACHRSTlMA/////////wDDC+u1AAAAWklEQVR42mNgwA0YgOABhAGhYQBJmEA0TBCbIkwgmibIpgk3jKyIYAJVERQTVBVgQ1AVoStC14SqCMMQwhB0RRhG0BThGIIqgusIoSgiM0QoitAVUUAhQJp5AABIEwIjW9eJ3gAAAABJRU5ErkJggg=='), auto;
+        }
+
+        button, .option, .score-btn {
+            cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAGFBMVEUAAAAAAACAgIAAAAAAAAD/AAD/AAAA//8v/6HgAAAAB3RSTlMA////////AM4A0a8AAABoSURBVDjL7dChFgAhCETRi/3/v3yFhCSzbwayqs15kCX89Ec8F3yGg884+IyDzzj4jIPPOPiMg884+IyDzzj4jIPPOPiMg884+IyDzzj4jIPPOPiMg884+LwB910C9xL/q7EAAAAASUVORK5CYII='), pointer;
+        }
+
+        /* === 1. 主視窗 === */
+        .window {
+            background-color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px) saturate(125%);
+            -webkit-backdrop-filter: blur(20px) saturate(125%);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), 
+                        0 0 0 1px rgba(0, 0, 0, 0.05); 
+            width: 95vw;
+            height: 92vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+            color: #333;
+        }
+
+        /* === 2. 標題列 === */
+        .title-bar {
+            background: transparent;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .title-bar-text {
+            color: #202020;
+            font-weight: 600;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
+        }
+
+        .title-bar-controls button {
+            background: transparent;
+            border: none;
+            color: #333;
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            margin-left: 4px;
+        }
+
+        .title-bar-controls button:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .title-bar-controls button:last-child:hover {
+            background-color: #e81123;
+            color: white;
+        }
+
+        /* === 3. 內容區域 === */
+        .content-area {
+            background-color: rgba(240, 243, 249, 0.5);
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        /* --- Style 1: 極簡大字報 (用於 Start Page) --- */
+        .art-type-container {
+            width: 100%;
+            height: 80%;
+            background-color: #222; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 4px solid #fff;
+            box-shadow: 10px 10px 0 rgba(0,0,0,0.25);
+            overflow: hidden;
+            position: relative;
+            transition: transform 0.3s;
+        }
+
+        .art-type-container:hover {
+            transform: scale(1.02);
+        }
+
+        .art-type-text {
+            font-family: 'Arial Black', 'Impact', sans-serif;
+            font-size: clamp(3rem, 10vh, 8rem);
+            line-height: 0.8;
+            color: transparent;
+            -webkit-text-stroke: 2px #fff; 
+            writing-mode: vertical-rl; 
+            text-orientation: upright;
+            letter-spacing: -5px;
+            opacity: 0.9;
+            user-select: none;
+        }
+
+        .art-type-container::after {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.1) 50%, transparent 60%);
+            animation: shine 4s infinite;
+            pointer-events: none;
+        }
+
+        @keyframes shine {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* --- Style 3: 現代幾何 (用於 Home Page) --- */
+        .art-geo-container {
+            width: 100%;
+            height: 80%;
+            background-color: #f4f1ea; 
+            border: 4px solid #222;
+            box-shadow: 10px 10px 0 rgba(0,0,0,0.8);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .shape {
+            position: absolute;
+            border: 3px solid #222;
+            transition: all 0.5s ease;
+        }
+
+        .shape-circle {
+            width: 12vh; height: 12vh;
+            border-radius: 50%;
+            background: #d32f2f;
+            top: 10%; left: -10%;
+        }
+        .shape-rect {
+            width: 40%; height: 60%;
+            background: #1976d2;
+            bottom: 5%; right: 10%;
+            z-index: 1;
+        }
+        .shape-line {
+            width: 150%; height: 15px;
+            background: #fbc02d;
+            transform: rotate(-45deg);
+            top: 50%; left: -20%;
+            z-index: 2;
+            border: none; border-top: 3px solid #222; border-bottom: 3px solid #222;
+        }
+
+        .shape-tri {
+            width: 0; height: 0;
+            border-left: 8vh solid transparent;
+            border-right: 8vh solid transparent;
+            border-bottom: 14vh solid #222;
+            top: 20%; left: 50%;
+            transform: translateX(-50%);
+            background: transparent;
+            border-top: none;
+        }
+        .shape-grid {
+            width: 80%; height: 30%;
+            background-image: radial-gradient(#222 20%, transparent 20%);
+            background-size: 10px 10px;
+            bottom: 15%; left: 10%;
+            border: none;
+        }
+        .shape-float {
+            width: 5vh; height: 5vh;
+            background: #fbc02d;
+            border-radius: 50%;
+            top: 55%; right: 20%;
+            animation: floatGeo 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes floatGeo {
+            from { transform: translateY(0); }
+            to { transform: translateY(-20px); }
+        }
+
+        .title-wrapper {
+            display: flex;
+            align-items: flex-end; 
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px; 
+            height: 100px; 
+        }
+
+        h1 { 
+            color: #000; 
+            text-shadow: 3px 3px #808080;
+            font-family: "DotGothic16", "Arial Black", sans-serif;
+            font-size: 4em;
+            letter-spacing: -2px;
+            margin: 0; 
+            line-height: 1;
+            align-self: center; 
+        }
+
+        .avatar-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .title-icon {
+            height: 80px;
+            width: auto;
+            filter: drop-shadow(3px 3px 3px rgba(0,0,0,0.3));
+            z-index: 2;
+            transform-origin: center left;
+            animation: flag-wave 2s ease-in-out infinite alternate;
+            border: 2px solid #fff;
+        }
+
+        .avatar-container.right .title-icon {
+            transform-origin: center right;
+            animation-delay: -1s;
+        }
+
+        @keyframes flag-wave {
+            0% { transform: rotate(0deg) skewY(0deg); }
+            100% { transform: rotate(3deg) skewY(2deg); }
+        }
+        
+        .subtitle { 
+            background: #fff; border: inset 3px; padding: 5px 20px; 
+            margin-bottom: 20px; display: inline-block; color: #000; font-size: 1.2em;
+        }
+
+        .btn {
+            background-color: #c0c0c0; color: #000;
+            border: 3px solid #fff; border-right-color: #404040; border-bottom-color: #404040;
+            padding: 10px 20px; text-align: center; font-size: 1.5em; margin: 10px;
+            cursor: pointer; font-family: "DotGothic16", inherit;
+            box-shadow: 2px 2px 0 #000; min-width: 250px;
+        }
+
+        .btn:active {
+            border: 3px solid #404040; border-right-color: #fff; border-bottom-color: #fff;
+            transform: translate(2px, 2px);
+        }
+
+        .btn-category { 
+            font-weight: bold; 
+            font-size: 2.2em; 
+            width: 320px;      
+            margin: 10px; 
+        }
+        
+        .btn-question { width: 100px; height: 100px; font-size: 2.5em; font-weight: bold; margin: 10px; }
+        .btn-question.visited {
+            background-color: #a0a0a0;
+            border: 2px solid #808080; border-right-color: #fff; border-bottom-color: #fff;
+            color: #505050; box-shadow: none; border-style: inset;
+        }
+
+        .btn-home { width: auto; font-size: 1.2em; margin-top: 15px; background-color: #a0a0a0; padding: 8px 15px; }
+        .btn-start { font-size: 2.5em; font-weight: bold; margin-top: 15px; background-color: #d0d0d0;}
+        .btn-settle { background-color: #E91E63; color: white; border: 3px outset #ff80ab; width: auto; font-size: 1.2em; padding: 5px 15px; }
+        .btn-settle:active { border-style: inset; }
+
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 10px 0; width: 90%; }
+        .option { background: #fff; padding: 15px; border: inset 3px; font-size: 2.2em; cursor: pointer; text-align: left; display: flex; align-items: center; }
+        .correct-answer { background-color: #000080 !important; color: #fff !important; animation: blink 0.5s step-end infinite alternate; }
+        @keyframes blink { 50% { background-color: #ff00ff !important; color: yellow !important; } }
+
+        .page { display: none; width: 100%; height: 100%; justify-content: center; align-items: center; flex-direction: column; }
+        .page.active { display: flex; }
+
+        .rules-box {
+            background: #fff; border: 3px inset #dfdfdf; padding: 10px 20px;
+            text-align: left; width: 70%; max-width: 800px; margin: 5px 0;
+            font-size: 1.3em; line-height: 1.3; box-shadow: inset 2px 2px 5px rgba(0,0,0,0.2);
+        }
+        .rules-box h3 { margin-top: 5px; color: #000080; border-bottom: 2px solid #c0c0c0; padding-bottom: 5px; margin-bottom: 5px; }
+        .rules-list li { margin-bottom: 5px; }
+
+        .home-layout { flex-direction: row !important; justify-content: center; align-items: center; gap: 5%; padding: 0 20px; width: 100%; box-sizing: border-box; }
+        .illustration-col { flex: 1; display: flex; justify-content: center; align-items: center; max-width: 21%; height: 100%; }
+        
+        .center-content { flex: 3; display: flex; flex-direction: column; align-items: center; z-index: 10; padding: 0 5px; max-width: 1400px; }
+        #category-list { display: flex; flex-wrap: wrap; justify-content: center; width: 100%; }
+
+        .score-box { background: #000; color: #0f0; padding: 5px 30px; font-family: monospace; border: inset 4px; margin-bottom: 10px; font-size: 3em; font-weight: bold; box-shadow: 0 0 10px #0f0; }
+        
+        #q-text { 
+            font-size: clamp(1.5em, 4vw, 2.6em);
+            margin: 5px 0; 
+            line-height: 1.3; 
+            width: 100%; 
+            white-space: normal; 
+            word-wrap: break-word; 
+            overflow: visible;   
+        }
+        
+        .taskbar { 
+            background-color: #c0c0c0; 
+            border-top: 2px solid #fff; 
+            padding: 5px 10px; 
+            display: flex; 
+            justify-content: space-evenly; 
+            align-items: center; 
+            height: 90px;
+            flex-shrink: 0; 
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.2); 
+            z-index: 100; 
+            overflow-x: auto;
+        }
+        .team-score { 
+            background: #dfdfdf; 
+            border: 2px inset #fff; 
+            padding: 3px 5px; 
+            display: flex; 
+            align-items: center; 
+            gap: 5px; 
+            border-radius: 4px;
+            margin: 0 2px;
+            flex-shrink: 0;
+        }
+        .team-name { 
+            font-weight: bold; 
+            font-size: 1.1em;
+            color: #000080; 
+            white-space: nowrap;
+        }
+        .score-display { 
+            font-family: monospace; 
+            font-size: 1.8em; 
+            background: #000; 
+            color: red; 
+            padding: 0 5px; 
+            min-width: 40px; 
+            text-align: right; 
+            border: 2px inset #808080; 
+        }
+        .score-btn { 
+            width: 30px;
+            height: 30px; 
+            font-size: 18px; 
+            font-weight: bold; 
+            line-height: 26px; 
+            text-align: center; 
+            padding: 0; 
+            background: #c0c0c0; 
+            border: 2px outset #fff; 
+            cursor: pointer; 
+        }
+        .score-btn:active { border-style: inset; } .score-btn.minus { color: red; } .score-btn.plus { color: green; }
+
+        #matrix-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2000; display: none; pointer-events: none; }
+        #wipe-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 2001; transform: scaleY(0); transform-origin: top; transition: transform 0.5s ease-in-out; pointer-events: none; }
+        .wipe-active { transform: scaleY(1) !important; }
+
+        #loading-text { position: absolute; top: 20px; left: 20px; color: #0f0; font-family: "DotGothic16", monospace; font-size: 2em; display: none; z-index: 2002; }
+
+        #leaderboard-content { background: #fff; border: 4px double #000080; padding: 40px; text-align: center; width: 80%; max-width: 600px; box-shadow: 10px 10px 0 rgba(0,0,0,0.5); position: relative; z-index: 1000; }
+        .trophy { font-size: 100px; display: block; margin-bottom: 20px; }
+        .winner-text { color: #d50000; font-size: 3em; font-weight: bold; animation: blink 0.5s infinite; word-wrap: break-word; } 
+        .rank-list { font-size: 1.5em; text-align: left; margin-top: 30px; border-top: 2px solid #ccc; padding-top: 20px; }
+        .rank-item { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px dotted #ccc; }
+
+        @media (max-aspect-ratio: 16/10) {
+            .illustration-col { max-width: 15%; }
+            .center-content { width: 70%; padding: 0 5px; }
+            #page-start .illustration-col:first-child .pixel-img,
+            #page-start .illustration-col:last-child .pixel-img { transform: scale(1.1); }
+            h1 { font-size: 3em; }
+            .rules-box { font-size: 1.2em; width: 85%; }
+            .title-icon { height: 60px; }
+            .title-wrapper { height: 80px; }
+            
+            .art-type-text { font-size: 4rem; }
+            .team-name { display: none; }
+            .score-btn { width: 25px; height: 25px; font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="window" id="main-window">
+    <div class="title-bar">
+        <div class="title-bar-text" id="win-title">World_Map.exe</div>
+        <div class="title-bar-controls">
+            <button>_</button>
+            <button id="fs-btn" onclick="toggleFullscreen()">□</button> 
+            <button>X</button>
+        </div>
+    </div>
+    
+    <div class="content-area">
+        
+        <canvas id="matrix-canvas"></canvas>
+        <div id="wipe-overlay">
+            <div id="loading-text">Loading</div>
+        </div>
+
+        <div id="page-start" class="page active home-layout">
+            <div class="illustration-col">
+                <div class="art-type-container">
+                    <div class="art-type-text" style="-webkit-text-stroke: 0; color: #fff;">WORLD</div>
+                </div>
+            </div>
+            <div class="center-content">
+                
+                <div class="title-wrapper">
+                    <div class="avatar-container">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/7/72/Flag_of_the_Republic_of_China.svg" alt="台灣國旗" class="title-icon">
+                    </div>
+                    <h1>國家知識王</h1>
+                    <div class="avatar-container right">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/0/03/Flag_of_Italy.svg" alt="義大利國旗" class="title-icon">
+                    </div>
+                </div>
+
+                <div class="subtitle">>>> System Loading: 7 Continents <<<</div>
+                <div class="rules-box">
+                    <h3>≡ 遊戲規則說明 ≡</h3>
+                    <ul class="rules-list">
+                        <li>個人戰：6 位選手輪流或搶答。</li>
+                        <li>範圍涵蓋：亞、歐、非、北美、南美、大洋、南極。</li>
+                        <li>所有題目皆為 1 分，最終積分最高者獲勝。</li>
+                        <li>請勿使用手機 Google 答案！</li>
+                    </ul>
+                </div>
+                <button class="btn btn-start" onclick="startGame()">開始遊戲_Start</button>
+            </div>
+            <div class="illustration-col">
+                <div class="art-type-container" style="background-color: #E91E63;">
+                    <div class="art-type-text">QUIZ</div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="page-home" class="page home-layout">
+            <div class="illustration-col">
+                <div class="art-geo-container">
+                    <div class="shape shape-circle"></div>
+                    <div class="shape shape-rect"></div>
+                    <div class="shape shape-line"></div>
+                </div>
+            </div>
+            <div class="center-content">
+                
+                <div class="title-wrapper">
+                    <div class="avatar-container">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/ea/Flag_of_Monaco.svg" alt="摩納哥" class="title-icon">
+                    </div>
+                    <h1>七大洲挑戰</h1>
+                    <div class="avatar-container right">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b9/Flag_of_Australia.svg" alt="澳洲" class="title-icon">
+                    </div>
+                </div>
+
+                <div class="subtitle">>>> Select Continent <<<</div>
+                <div id="category-list"></div>
+            </div>
+            <div class="illustration-col">
+                <div class="art-geo-container">
+                    <div class="shape shape-tri"></div>
+                    <div class="shape shape-float"></div>
+                    <div class="shape shape-grid"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-selection" class="page">
+            <h2 id="selection-title" style="border-bottom: 4px solid #808080; padding-bottom: 15px; font-size: 2.5em;">選擇題目</h2>
+            <div id="question-list" style="display: flex; flex-wrap: wrap; justify-content: center;"></div>
+            <button class="btn btn-home" onclick="goHomeWithMatrix()">回主選單 (ESC)</button>
+        </div>
+
+        <div id="page-question" class="page">
+            <div class="score-box">本題: <span id="q-score">0</span> 分</div>
+            
+            <div id="question-content-area" style="width: 80%; text-align: center;"></div>
+            <div class="options-grid" id="q-options"></div>
+            
+            <div id="short-answer-text" class="short-answer-display" style="display:none; font-size: 2.5em; color: #d50000; font-weight: bold; background: #fff; padding: 10px; border: 3px solid #000;"></div>
+
+            <div>
+                <button id="reveal-btn" class="btn" style="background:#E0E0E0; color: #b22222; font-weight:bold;" onclick="revealAnswer()">看答案</button>
+                <button class="btn btn-home" onclick="goBackToSelection()">返回</button>
+            </div>
+        </div>
+
+        <div id="page-leaderboard" class="page">
+            <div id="leaderboard-content">
+                <span class="trophy">🏆</span>
+                <h2>WE ARE THE CHAMPION</h2>
+                <div id="winner-display" class="winner-text"></div>
+                <div class="rank-list" id="rank-list"></div>
+                <button class="btn btn-home" onclick="restartGame()">重新開始</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="taskbar">
+        <div class="team-score">
+            <span class="team-name">謝沛讌</span>
+            <button class="score-btn minus" onclick="updateScore(1, -1)">-</button>
+            <div class="score-display" id="score-player-1">0</div>
+            <button class="score-btn plus" onclick="updateScore(1, 1)">+</button>
+        </div>
+        <div class="team-score">
+            <span class="team-name">蔡牧謙</span>
+            <button class="score-btn minus" onclick="updateScore(2, -1)">-</button>
+            <div class="score-display" id="score-player-2">0</div>
+            <button class="score-btn plus" onclick="updateScore(2, 1)">+</button>
+        </div>
+        <div class="team-score">
+            <span class="team-name">吳軍慧</span>
+            <button class="score-btn minus" onclick="updateScore(3, -1)">-</button>
+            <div class="score-display" id="score-player-3">0</div>
+            <button class="score-btn plus" onclick="updateScore(3, 1)">+</button>
+        </div>
+        <div class="team-score">
+            <span class="team-name">吳岱倫</span>
+            <button class="score-btn minus" onclick="updateScore(4, -1)">-</button>
+            <div class="score-display" id="score-player-4">0</div>
+            <button class="score-btn plus" onclick="updateScore(4, 1)">+</button>
+        </div>
+        <div class="team-score">
+            <span class="team-name">陳文豫</span>
+            <button class="score-btn minus" onclick="updateScore(5, -1)">-</button>
+            <div class="score-display" id="score-player-5">0</div>
+            <button class="score-btn plus" onclick="updateScore(5, 1)">+</button>
+        </div>
+        <div class="team-score">
+            <span class="team-name">陳怡霖</span>
+            <button class="score-btn minus" onclick="updateScore(6, -1)">-</button>
+            <div class="score-display" id="score-player-6">0</div>
+            <button class="score-btn plus" onclick="updateScore(6, 1)">+</button>
+        </div>
+        
+        <button class="btn btn-settle" onclick="showLeaderboard()">結算</button>
+    </div>
+
+</div>
+
+<script>
+    const SoundSystem = {
+        ctx: null,
+        init: function() {
+            if (!this.ctx) {
+                this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        },
+        playTone: function(freq, type, duration, vol = 0.1, startTime = 0) {
+            if (!this.ctx) return;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, this.ctx.currentTime + startTime);
+            gain.gain.setValueAtTime(0, this.ctx.currentTime + startTime);
+            gain.gain.linearRampToValueAtTime(vol, this.ctx.currentTime + startTime + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + startTime + duration);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(this.ctx.currentTime + startTime);
+            osc.stop(this.ctx.currentTime + startTime + duration);
+        },
+        playHover: function() { this.playTone(800, 'square', 0.05, 0.02); }, 
+        playClick: function() { this.playTone(600, 'square', 0.1, 0.05); }, 
+        playDataNoise: function() { 
+            if (!this.ctx) return;
+            const bufferSize = this.ctx.sampleRate * 0.3; 
+            const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+            const noise = this.ctx.createBufferSource();
+            noise.buffer = buffer;
+            const gain = this.ctx.createGain();
+            gain.gain.value = 0.05;
+            noise.connect(gain);
+            gain.connect(this.ctx.destination);
+            noise.start();
+        },
+        playCoin: function() { 
+            this.playTone(987, 'square', 0.1, 0.1, 0); 
+            this.playTone(1318, 'square', 0.4, 0.1, 0.1); 
+        }
+    };
+
+    // === 七大洲題目資料 (各 10 題) ===
+    const gameData = [
+        {
+            category: "亞洲 (Asia)",
+            questions: [
+                {
+                    text: "世界上海拔最高的山峰「聖母峰」位於哪兩個國家的邊界？",
+                    options: ["A. 中國與印度", "B. 印度與巴基斯坦", "C. 中國與尼泊爾", "D. 尼泊爾與不丹"],
+                    correctIndex: 2,
+                    score: 1
+                },
+                {
+                    text: "下列哪個國家被稱為「萬佛之國」，且首都是曼谷？",
+                    options: ["A. 緬甸", "B. 泰國", "C. 寮國", "D. 柬埔寨"],
+                    correctIndex: 1,
+                    score: 1
+                },
+                {
+                    text: "日本的象徵「富士山」屬於哪種類型的火山？",
+                    options: ["A. 休眠火山", "B. 死火山", "C. 活火山", "D. 泥火山"],
+                    correctIndex: 2,
+                    score: 1
+                },
+                {
+                    text: "東南亞國家中，唯一一個內陸國家（沒有海岸線）的是？",
+                    options: ["A. 越南", "B. 寮國", "C. 泰國", "D. 馬來西亞"],
+                    correctIndex: 1,
+                    score: 1
+                },
+                {
+                    text: "亞洲最長的河流是？",
+                    options: ["A. 恆河", "B. 湄公河", "C. 長江", "D. 黃河"],
+                    correctIndex: 2,
+                    score: 1
+                },
+                {
+                    text: "著名景點「吳哥窟」位於哪個國家？",
+                    options: ["A. 泰國", "B. 柬埔寨", "C. 越南", "D. 印尼"],
+                    correctIndex: 1,
+                    score: 1
+                },
+                {
+                    text: "目前世界上人口最多的國家是？",
+                    options: ["A. 美國", "B. 印尼", "C. 中國", "D. 印度"],
+                    correctIndex: 3,
+                    score: 1
+                },
+                {
+                    text: "誰最早發明紙張？",
+                    options: ["A. 埃及人", "B. 中國人", "C. 希臘人", "D. 忍者（寫密信用的）"],
+                    correctIndex: 1,
+                    score: 1
+                },
+                {
+                    text: "日本武士為什麼會有「切腹」的傳統？",
+                    options: ["A. 太熱了想透氣", "B. 以死明志和負責", "C. 想學魔術表演", "D. 因為盔甲太難脫"],
+                    correctIndex: 1,
+                    score: 1
+                },
+                {
+                    text: "泰姬瑪哈陵的建造原因是？",
+                    options: ["A. 皇帝蓋來收房租", "B. 皇帝紀念亡妻", "C. 皇帝蓋給自己度假", "D. 皇帝蓋給寵物"],
+                    correctIndex: 1,
+                    score: 1
+                }
+            ]
+        },
+        {
+            category: "歐洲 (Europe)",
+            questions: [
+                {
+                    text: "歐洲面積最小的國家，同時也是世界上面積最小的主權國家是？",
+                    options: ["A. 摩納哥", "B. 聖馬利諾", "C. 梵蒂岡", "D. 列支敦斯登"],
+                    correctIndex: 2,
+                    score: 1
+                },
+                {
+                    text: "下列哪一條河流被稱為「歐洲的母親河」，且流經國家最多？",
+                    options: ["A. 萊茵河", "B. 塞納河", "C. 多瑙河", "D. 伏爾加河"],
+                    correctIndex: 2,
+                    score: 1
+                },
+                {
+                    text: "瑞士的首都是下列哪個城市？",
+                    options: ["A. 蘇黎世", "B. 日內瓦", "C. 伯恩", "D. 洛桑"],
+                    correctIndex: 2,
+                    score: 1
+                },
+                {
+                    text: "位於法國巴黎，為了紀念拿破崙戰爭勝利而建的著名建築是？",
+                    options: ["A. 艾菲爾鐵塔", "B. 凱旋門", "C. 羅浮宮", "D. 凡爾賽宮"],
+                    correctIndex: 1,
+                    score: 1
+                },
+                {
+                    text: "英國目前使用的貨幣是？",
+                    options: ["A. 歐元", "B. 英鎊", "C. 法郎", "D. 克朗"],
+                    correctIndex: 1,
+                    score: 1
+                },
+                {
+                    text: "下列哪個國家被稱為「千湖之國」？",
+                    options: ["A. 挪威", "B. 瑞典", "C. 芬蘭", "D. 丹麥"],
+                    correctIndex: 2,
+                    score: 1
+                },
+                {
+                    text: "歷史上著名的「文藝復興」運動發源於哪個國家？",
+                    options: ["A. 法國", "B. 希臘", "C. 義大利", "D. 德國"],
+                    correctIndex: 2,
+                    score: 1
+                },
+                {
+                    text: "希臘神話的故事常常很戲劇化，原因是？",
+                    options: ["A. 眾神太閒喜歡鬧事", "B. 神仙們是劇場出身", "C. 早期電視台競爭激烈", "D. 腦洞太大"],
+                    correctIndex: 0,
+                    score: 1
+                },
+                {
+                    text: "羅馬帝國為什麼軍事強大？",
+                    options: ["A. 盾牌很時尚", "B. 道路工程太強", "C. 羅馬人愛跑步", "D. 羅馬人睡眠好"],
+                    correctIndex: 1,
+                    score: 1
+                },
+                {
+                    text: "法國巴士底日是紀念什麼？",
+                    options: ["A. 第一家麵包店", "B. 人民攻入監獄引發革命", "C. 第一個法式濾壓壺", "D. 法國第一間咖啡館"],
+                    correctIndex: 1,
+                    score: 1
+                }
+            ]
+        },
+        {
+            category: "非洲 (Africa)",
+            questions: [
+                {
+                    text: "世界最長的河流「尼羅河」主要流經哪個大陸？",
+                    options: ["A. 亞洲", "B. 南美洲", "C. 非洲", "D. 北美洲"],
+                    correctIndex: 2,
+                    score: 1
+                },
+                {
+                    text: "非洲最高的山峰是？",
+                    options: ["A. 肯亞山", "B. 吉力馬札羅山", "C. 阿特拉斯山", "D. 德拉肯斯山"],
+                    correctIndex: 1,
+                    score: 1
+                },
+                {
+                    text: "著名的「金字塔」和「人面獅身像」位於哪個國家？",
+                    options: ["A. 蘇丹", "B. 埃及", "C. 利比亞", "D. 阿爾及利亞"],
+                    correctIndex: 1,
+                    score: 1
+                },
+                {
+                    text: "擁有「彩虹國度」美稱，且曾實施種族隔離政策的國家是？",
+                    options: ["A. 奈及利亞", "B. 肯亞", "C. 南非", "D. 埃及"],
+                    correctIndex: 2,
+                    score: 1
+                },
+                {
+                    text: "世界最大的熱帶沙漠是？",
+                    options: ["A. 戈壁沙漠", "B. 喀拉哈里沙漠", "C. 撒哈拉沙漠", "D. 塔克拉瑪干沙漠"],
+                    correctIndex: 2,
+                    score: 1
+                },
+                {
+                    text: "動畫《馬達加斯加》中的馬達加斯加島位於非洲的哪個方向？",
+                    options: ["A. 東北部", "B. 東南部", "C. 西北部", "D. 西南部"],
+                    correctIndex: 1,
+                    score: 1
+                },
+                {
+                    text: "非洲目前面積最大的國家是？",
+                    options: ["A. 蘇丹", "B. 阿爾及利亞", "C. 剛果民主共和國", "D. 奈及利亞"],
+                    correctIndex: 1,
+                    score: 1
+                },
+                {
+                    text: "古埃及人為什麼崇拜貓？",
+                    options: ["A. 因為貓會幫忙寫象形文字", "B. 因為貓高貴又神秘", "C. 因為貓太可愛", "D. 因為法老養了太多"],
+                    correctIndex: 1,
+                    score: 1
+                },
+                {
+                    text: "人類最早的祖先為什麼出現在非洲？",
+                    options: ["A. 天氣舒服資源多", "B. GPS 設定在非洲", "C. 因為最先有 Wi-Fi", "D. 因為最先有可可豆"],
+                    correctIndex: 0,
+                    score: 1
+                },
+                {
+                    text: "曼薩穆薩皇帝為什麼被稱為「非洲首富」？",
+                    options: ["A. 挖到石油", "B. 旅途中撒錢撒到造成通膨", "C. 他是投資天才", "D. 中了古代樂透"],
+                    correctIndex: 1,
+                    score: 1
+                }
+            ]
+        },
+        {
+            category: "北美洲 (N. America)",
+            questions: [
+                {
+                    text: "加拿大的首都是？",
+                    options: ["A. 多倫多", "B. 溫哥華", "C. 渥太華", "D. 蒙特婁"],
+                    correctIndex: 2,
+                    score: 1
+                },
+                {
+                    text: "位於美國紐約港，象徵自由與民主的著名雕像是？",
+                    options: ["A. 救世基督像", "B. 自由女神像", "C. 林肯紀念堂", "D. 華盛頓紀念碑"],
+                    correctIndex: 1,
+                    score: 1
+                },
+                {
+                    text: "美國的官方語言是？",
+                    options: ["A. 英語", "B. 西班牙語", "C. 法語", "D. 聯邦層級沒有法定官方語言"],
+                    correctIndex: 3,
+                    score: 1
+                },
+                {
+                    text: "世界第一大島「格陵蘭」在地理上屬於哪個洲？",
+                    options: ["A. 歐洲", "B. 北美洲", "C. 亞洲", "D. 南極洲"],
+                    correctIndex: 1,
+                    score: 1
+                },
+                {
+                    text: "連接太平洋與大西洋的「巴拿馬運河」位於哪裡？",
+                    options: ["A. 南美洲", "B. 北美洲/中美洲", "C. 歐洲", "D. 非洲"],
+                    correctIndex: 1,
+                    score: 1
+                },
+                {
+                    text: "著名的電影產業中心「好萊塢 (Hollywood)」位於美國的哪個州？",
+                    options: ["A. 紐約州", "B. 德州", "C. 加州", "D. 佛羅里達州"],
+                    correctIndex: 2,
+                    score: 1
+                },
+                {
+                    text: "著名的「尼加拉瀑布」位於哪兩個國家的邊界？",
+                    options: ["A. 美國與墨西哥", "B. 美國與加拿大", "C. 加拿大與格陵蘭", "D. 巴西與阿根廷"],
+                    correctIndex: 1,
+                    score: 1
+                },
+                {
+                    text: "美國名字「America」來源是？",
+                    options: ["A. 因為太美了", "B. 探險家 Amerigo 的名字", "C. 原住民的稱呼", "D. 北美最美的地方"],
+                    correctIndex: 1,
+                    score: 1
+                },
+                {
+                    text: "瑪雅文明的「世界末日」傳說怎麼來的？",
+                    options: ["A. 他們真的算到世界要爆炸", "B. 月曆寫到那裡而已", "C. 他們懶得寫更多", "D. 畫家請假了"],
+                    correctIndex: 1,
+                    score: 1
+                },
+                {
+                    text: "美國獨立戰爭的導火線是？",
+                    options: ["A. 披薩漲價", "B. 不爽英國加稅", "C. 茶太難喝", "D. 殖民地停電"],
+                    correctIndex: 1,
+                    score: 1
+                }
+            ]
+        },
+        {
+            category: "南美洲 (S. America)",
+            questions: [
+                {
+                    text: "擁有世界最大熱帶雨林，且是南美洲面積最大的國家是？",
+                    options: ["A. 阿根廷", "B. 智利", "C. 巴西", "D. 秘魯"],
+                    correctIndex: 2,
+                    score: 1
+                },
+                {
+                    text: "古代文明「印加帝國」主要分佈在現今哪個山脈區域？",
+                    options: ["A. 落磯山脈", "B. 阿帕拉契山脈", "C. 安地斯山脈", "D. 阿爾卑斯山脈"],
+                    correctIndex: 2,
+                    score: 1
+                },
+                {
+                    text: "南美洲最狹長的國家，被稱為「絲帶國」的是？",
+                    options: ["A. 智利", "B. 厄瓜多", "C. 委內瑞拉", "D. 烏拉圭"],
+                    correctIndex: 0,
+                    score: 1
+                },
+                {
+                    text: "位於巴西里約熱內盧，張開雙臂的著名地標是？",
+                    options: ["A. 自由女神像", "B. 救世基督像", "C. 大衛像", "D. 思想者"],
+                    correctIndex: 1,
+                    score: 1
+                },
+                {
+                    text: "世界最高的瀑布「安赫爾瀑布 (Angel Falls)」位於？",
+                    options: ["A. 巴西", "B. 阿根廷", "C. 委內瑞拉", "D. 哥倫比亞"],
+                    correctIndex: 2,
+                    score: 1
+                },
+                {
+                    text: "神祕的古蹟「馬丘比丘」位於哪個國家？",
+                    options: ["A. 秘魯", "B. 智利", "C. 玻利維亞", "D. 墨西哥"],
+                    correctIndex: 0,
+                    score: 1
+                },
+                {
+                    text: "阿根廷的首都是？",
+                    options: ["A. 聖地亞哥", "B. 利馬", "C. 波哥大", "D. 布宜諾斯艾利斯"],
+                    correctIndex: 3,
+                    score: 1
+                },
+                {
+                    text: "印加帝國沒有鐵器和馬，卻強盛的原因？",
+                    options: ["A. 魔法", "B. 工程與管理能力超強", "C. 每天跑山練身體", "D. 太陽神加持"],
+                    correctIndex: 1,
+                    score: 1
+                },
+                {
+                    text: "亞馬遜雨林為什麼被叫做地球之肺？",
+                    options: ["A. 因為它會呼吸", "B. 生產大量氧氣", "C. 因為形狀像肺", "D. 森林裡有診所"],
+                    correctIndex: 1,
+                    score: 1
+                },
+                {
+                    text: "巴西狂歡節那麼熱鬧的原因？",
+                    options: ["A. 不用上班", "B. 拉丁文化 + 非洲文化融合", "C. 舞鞋免費", "D. 天氣太熱必須跳舞散熱"],
+                    correctIndex: 1,
+                    score: 1
+                }
+            ]
+        },
+        {
+            category: "大洋洲 (Oceania)",
+            questions: [
+                {
+                    text: "澳洲的首都是？",
+                    options: ["A. 雪梨", "B. 墨爾本", "C. 坎培拉", "D. 布里斯本"],
+                    correctIndex: 2,
+                    score: 1
+                },
+                {
+                    text: "紐西蘭著名的原住民文化是？",
+                    options: ["A. 阿伊努人", "B. 毛利人", "C. 因紐特人", "D. 祖魯人"],
+                    correctIndex: 1,
+                    score: 1
+                },
+                {
+                    text: "世界上最大的珊瑚礁群「大堡礁」位於哪個國家的海岸？",
+                    options: ["A. 紐西蘭", "B. 斐濟", "C. 澳洲", "D. 巴布亞紐幾內亞"],
+                    correctIndex: 2,
+                    score: 1
+                },
+                {
+                    text: "有「奇異鳥 (Kiwi)」作為國鳥的國家是？",
+                    options: ["A. 澳洲", "B. 紐西蘭", "C. 薩摩亞", "D. 東加"],
+                    correctIndex: 1,
+                    score: 1
+                },
+                {
+                    text: "大洋洲面積最大的國家是？",
+                    options: ["A. 紐西蘭", "B. 巴布亞紐幾內亞", "C. 澳洲", "D. 索羅門群島"],
+                    correctIndex: 2,
+                    score: 1
+                },
+                {
+                    text: "下列哪種動物是澳洲特有，且是有袋類動物？",
+                    options: ["A. 熊貓", "B. 無尾熊", "C. 樹懶", "D. 浣熊"],
+                    correctIndex: 1,
+                    score: 1
+                },
+                {
+                    text: "著名旅遊勝地「波拉波拉島 (Bora Bora)」位於哪裡？",
+                    options: ["A. 夏威夷", "B. 法屬玻里尼西亞", "C. 斐濟", "D. 關島"],
+                    correctIndex: 1,
+                    score: 1
+                },
+                {
+                    text: "袋鼠為什麼用跳的？",
+                    options: ["A. 走路太慢", "B. 跳比較省力", "C. 想看起來更可愛", "D. 為了比賽跳高"],
+                    correctIndex: 1,
+                    score: 1
+                },
+                {
+                    text: "毛利人臉部刺青（Moko）代表什麼？",
+                    options: ["A. 美容", "B. 個人身分與家族地位", "C. 防蚊", "D. 戲劇角色"],
+                    correctIndex: 1,
+                    score: 1
+                },
+                {
+                    text: "澳洲早期被英國當什麼地方使用？",
+                    options: ["A. 度假島", "B. 懲罰島（流放犯人）", "C. 皇室退休村", "D. 羊咩咩天堂"],
+                    correctIndex: 1,
+                    score: 1
+                }
+            ]
+        },
+        {
+            category: "南極洲 (Antarctica)",
+            questions: [
+                {
+                    text: "南極洲是地球上唯一沒有什麼常住居民的大陸？",
+                    options: ["A. 企鵝", "B. 科學家", "C. 原住民", "D. 遊客"],
+                    correctIndex: 2,
+                    score: 1
+                },
+                {
+                    text: "在南極洲絕對看不到下列哪種動物（野生狀態下）？",
+                    options: ["A. 企鵝", "B. 海豹", "C. 北極熊", "D. 磷蝦"],
+                    correctIndex: 2,
+                    score: 1
+                },
+                {
+                    text: "南極洲擁有世界上面積最大的什麼地貌？",
+                    options: ["A. 熱帶雨林", "B. 草原", "C. 荒漠（冷沙漠）", "D. 沼澤"],
+                    correctIndex: 2,
+                    score: 1
+                },
+                {
+                    text: "哪一位探險家帶領的團隊首先抵達了南極點？",
+                    options: ["A. 羅伯特·史考特", "B. 羅爾德·阿蒙森", "C. 恩斯特·沙克爾頓", "D. 詹姆斯·庫克"],
+                    correctIndex: 1,
+                    score: 1
+                },
+                {
+                    text: "根據《南極條約》，南極洲的主要用途是？",
+                    options: ["A. 軍事基地測試", "B. 核廢料處置", "C. 和平目的與科學研究", "D. 商業礦產開採"],
+                    correctIndex: 2,
+                    score: 1
+                },
+                {
+                    text: "南極洲被大量冰雪覆蓋，其冰蓋儲存了地球上約多少比例的淡水？",
+                    options: ["A. 10%", "B. 30%", "C. 50%", "D. 70%"],
+                    correctIndex: 3,
+                    score: 1
+                },
+                {
+                    text: "南極洲的最高峰是？",
+                    options: ["A. 吉力馬札羅山", "B. 文森山", "C. 麥金利山", "D. 艾爾布魯斯峰"],
+                    correctIndex: 1,
+                    score: 1
+                },
+                {
+                    text: "為什麼南極洲沒有原住民？",
+                    options: ["A. 因為太冷", "B. 因為沒有 Wi-Fi", "C. 因為沒有咖啡店", "D. 因為沒有外送"],
+                    correctIndex: 0,
+                    score: 1
+                },
+                {
+                    text: "企鵝為什麼不搬去熱帶國家？",
+                    options: ["A. 牠們怕曬黑", "B. 牠們體溫太高", "C. 牠們太愛冷", "D. 牠們沒護照"],
+                    correctIndex: 2,
+                    score: 1
+                },
+                {
+                    text: "南極洲為什麼沒有國家？",
+                    options: ["A. 因為大家懶得爭", "B. 因為太滑不想走", "C. 因為有國際條約保護", "D. 因為企鵝不想要政府"],
+                    correctIndex: 2,
+                    score: 1
+                }
+            ]
+        }
+    ];
+
+    let currentCategoryIndex = 0;
+    let currentQuestionIndex = 0;
+    
+    // 初始化 6 位參賽者的分數
+    let scores = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
+    // 對應的名字列表，用於排行榜
+    const playerNames = {
+        1: "謝沛讌", 2: "蔡牧謙", 3: "吳軍慧", 
+        4: "吳岱倫", 5: "陳文豫", 6: "陳怡霖"
+    };
+
+    let visitedQuestions = new Set();
+    let stopConfettiFunc = null;
+
+    function init() {
+        attachSoundEvents();
+
+        const categoryList = document.getElementById('category-list');
+        gameData.forEach((cat, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'btn btn-category';
+            btn.innerText = cat.category;
+            btn.onclick = () => {
+                SoundSystem.playClick();
+                playWipeTransition(() => showSelectionPage(index));
+            };
+            categoryList.appendChild(btn);
+        });
+        
+        document.addEventListener("fullscreenchange", () => {
+            const fsBtn = document.getElementById('fs-btn');
+            if (document.fullscreenElement) {
+                fsBtn.innerText = '❐'; 
+            } else {
+                fsBtn.innerText = '□'; 
+            }
+        });
+    }
+
+    function attachSoundEvents() {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(btn => {
+            btn.onmouseenter = () => SoundSystem.playHover();
+        });
+    }
+
+    function playWipeTransition(callback) {
+        SoundSystem.playDataNoise(); 
+        const overlay = document.getElementById('wipe-overlay');
+        const loadingText = document.getElementById('loading-text');
+        
+        let dots = 0;
+        loadingText.innerText = "Loading";
+        loadingText.style.display = 'block';
+        
+        const dotInterval = setInterval(() => {
+            dots = (dots + 1) % 4;
+            let str = "Loading";
+            for(let i=0; i<dots; i++) str += ".";
+            loadingText.innerText = str;
+        }, 150); 
+
+        overlay.classList.add('wipe-active');
+        
+        setTimeout(() => {
+            callback();
+            setTimeout(() => { 
+                overlay.classList.remove('wipe-active');
+                clearInterval(dotInterval);
+                loadingText.style.display = 'none';
+            }, 800); 
+        }, 800); 
+    }
+
+    function startMatrixEffect(callback) {
+        SoundSystem.playDataNoise(); 
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.style.display = 'block';
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+        const drops = [];
+        for(let i=0; i<columns; i++) drops[i] = Math.random() * -50; 
+
+        let animationId;
+
+        function draw() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0F0';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = letters.charAt(Math.floor(Math.random() * letters.length));
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                drops[i]++;
+            }
+            animationId = requestAnimationFrame(draw);
+        }
+
+        draw();
+
+        setTimeout(() => {
+            cancelAnimationFrame(animationId);
+            canvas.style.display = 'none';
+            callback();
+        }, 800);
+    }
+
+    function startConfetti() {
+        const canvas = document.getElementById('matrix-canvas'); 
+        const ctx = canvas.getContext('2d');
+        canvas.style.display = 'block';
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const confettiCount = 150;
+        const confetti = [];
+        const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#00ffff', '#ff00ff'];
+
+        for (let i = 0; i < confettiCount; i++) {
+            confetti.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height - canvas.height,
+                w: Math.random() * 10 + 5,
+                h: Math.random() * 10 + 5,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                speed: Math.random() * 3 + 2,
+                drift: Math.random() * 2 - 1
+            });
+        }
+
+        let animationId;
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            confetti.forEach((c, index) => {
+                ctx.fillStyle = c.color;
+                ctx.fillRect(c.x, c.y, c.w, c.h); 
+
+                c.y += c.speed;
+                c.x += c.drift;
+
+                if (c.y > canvas.height) {
+                    confetti[index].y = -10;
+                    confetti[index].x = Math.random() * canvas.width;
+                }
+            });
+
+            animationId = requestAnimationFrame(draw);
+        }
+
+        draw();
+        
+        return () => {
+            cancelAnimationFrame(animationId);
+            canvas.style.display = 'none';
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        };
+    }
+
+    function showSelectionPage(catIndex) {
+        currentCategoryIndex = catIndex;
+        document.getElementById('win-title').innerText = "World_Map.exe - " + gameData[catIndex].category;
+        
+        const qList = document.getElementById('question-list');
+        qList.innerHTML = ''; 
+        const questions = gameData[catIndex].questions;
+        if (questions.length === 0) {
+            qList.innerHTML = '<p style="font-size:2em;">(暫無題目)</p>';
+        } else {
+            questions.forEach((q, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'btn btn-question';
+                btn.innerText = index + 1;
+                
+                if (visitedQuestions.has(`${catIndex}-${index}`)) {
+                    btn.classList.add('visited');
+                }
+
+                btn.onmouseenter = () => SoundSystem.playHover();
+                btn.onclick = () => {
+                    SoundSystem.playClick();
+                    showQuestionPage(index);
+                };
+                
+                qList.appendChild(btn);
+            });
+        }
+        switchPage('page-selection');
+    }
+
+    function showQuestionPage(qIndex) {
+        currentQuestionIndex = qIndex;
+        const qData = gameData[currentCategoryIndex].questions[qIndex];
+        document.getElementById('win-title').innerText = "Question_Viewer.exe";
+        document.getElementById('q-score').innerText = qData.score;
+        
+        const contentArea = document.getElementById('question-content-area');
+        contentArea.innerHTML = ''; 
+
+        const textH2 = document.createElement('h2');
+        textH2.id = 'q-text';
+        textH2.innerHTML = qData.text;
+        contentArea.appendChild(textH2);
+        
+        const optionsDiv = document.getElementById('q-options');
+        const shortAnswerDiv = document.getElementById('short-answer-text');
+        const revealBtn = document.getElementById('reveal-btn');
+        
+        optionsDiv.innerHTML = '';
+        shortAnswerDiv.style.display = 'none'; 
+        shortAnswerDiv.innerText = '';
+
+        revealBtn.innerText = "看答案"; 
+
+        if (qData.options && qData.options.length > 0) {
+            qData.options.forEach((opt, index) => {
+                const div = document.createElement('div');
+                div.className = 'option';
+                div.id = 'opt-' + index;
+                div.innerText = opt;
+                div.onmouseenter = () => SoundSystem.playHover();
+                optionsDiv.appendChild(div);
+            });
+        } 
+
+        document.getElementById('reveal-btn').style.display = 'inline-block';
+        switchPage('page-question');
+    }
+
+    function revealAnswer() {
+        SoundSystem.playCoin(); 
+        const qData = gameData[currentCategoryIndex].questions[currentQuestionIndex];
+        
+        if (qData.options && qData.options.length > 0) {
+            const correctIdx = qData.correctIndex;
+            const correctDiv = document.getElementById('opt-' + correctIdx);
+            if(correctDiv) { correctDiv.classList.add('correct-answer'); }
+        } else {
+            const shortAnswerDiv = document.getElementById('short-answer-text');
+            shortAnswerDiv.innerText = qData.answerText;
+            shortAnswerDiv.style.display = 'block';
+        }
+
+        document.getElementById('reveal-btn').style.display = 'none';
+        visitedQuestions.add(`${currentCategoryIndex}-${currentQuestionIndex}`);
+    }
+
+    function updateScore(playerId, change) {
+        SoundSystem.playClick();
+        scores[playerId] += change;
+        document.getElementById('score-player-' + playerId).innerText = scores[playerId];
+    }
+
+    function switchPage(pageId) {
+        document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+    }
+
+    function startGame() {
+        SoundSystem.init(); 
+        SoundSystem.playClick();
+        switchPage('page-home');
+    }
+
+    function goHome() {
+        document.getElementById('win-title').innerText = "World_Map.exe";
+        switchPage('page-home');
+    }
+
+    function goHomeWithMatrix() {
+        startMatrixEffect(() => {
+            goHome();
+        });
+    }
+
+    function goBackToSelection() {
+        showSelectionPage(currentCategoryIndex);
+    }
+
+    function showLeaderboard() {
+        let sortedScores = Object.keys(scores).map(key => {
+            return { id: key, score: scores[key] };
+        }).sort((a, b) => b.score - a.score);
+
+        const maxScore = sortedScores[0].score;
+        const winners = sortedScores.filter(s => s.score === maxScore);
+        
+        let winnerText = "";
+        if (winners.length === 1) {
+            winnerText = `${playerNames[winners[0].id]} (${winners[0].score}分)`;
+        } else {
+            const winnerNames = winners.map(w => playerNames[w.id]).join(" & ");
+            winnerText = `${winnerNames} 並列冠軍 (${maxScore}分)`;
+        }
+        document.getElementById('winner-display').innerText = winnerText;
+
+        const listDiv = document.getElementById('rank-list');
+        listDiv.innerHTML = '';
+        
+        let displayRank = 1;
+        for (let i = 0; i < sortedScores.length; i++) {
+            if (i > 0 && sortedScores[i].score < sortedScores[i-1].score) {
+                displayRank++; 
+            }
+            
+            listDiv.innerHTML += `
+                <div class="rank-item">
+                    <span>Rank ${displayRank}: ${playerNames[sortedScores[i].id]}</span>
+                    <span>${sortedScores[i].score} pts</span>
+                </div>`;
+        }
+
+        switchPage('page-leaderboard');
+        stopConfettiFunc = startConfetti();
+    }
+
+    function restartGame() {
+        if (stopConfettiFunc) stopConfettiFunc();
+        // 清除 6 位玩家的分數
+        scores = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
+        for(let i=1; i<=6; i++){
+            document.getElementById('score-player-' + i).innerText = 0;
+        }
+        visitedQuestions.clear();
+        
+        switchPage('page-start');
+    }
+
+    function toggleFullscreen() {
+        const fsBtn = document.getElementById('fs-btn');
+        
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+    }
+
+    init();
+</script>
+
+</body>
+</html>
